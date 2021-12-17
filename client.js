@@ -1,23 +1,26 @@
-const { randomInt } = require("crypto");
 const fs = require("fs");
 const net = require("net");
+const EventEmitter = require("events");
 
-let i = 1;
-let username = `guest${i}`;
-const clients = [];
+class Client extends EventEmitter {
+  constructor(username) {
+    super();
+    this.username = username;
+
+    this.once("username", () => {
+      //get username here
+    })
+  }
+}
 
 const chatLog = fs.createWriteStream("chatLog.txt");
-process.stdin.pipe(chatLog);
 
 const client = net.createConnection({ port: 5000 }, () => {
-  client.write(`${username} connected`);
+  console.log("connected")
 });
+process.stdin.pipe(client);
 
 client.on('data', (data) => {
-  console.log("Message from server: " + data.toString());
-  client.end();
+  console.log(data.toString());
 });
 
-client.on('connected', () => {
-  console.log(`${username} connected`)
-})
